@@ -1,11 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axiosInstance from '../axiosInstance';
 export default function List() {
     const[products,setProducts] = useState([]);
     const navigate = useNavigate();
     useEffect(()=>{
-        axios.get('http://localhost:8000/api/products').then(response =>{
+        axiosInstance.get('/products').then(response =>{
             setProducts(response.data.data)
         })
     },[]);
@@ -13,14 +14,13 @@ export default function List() {
     const removeProduct = (e, id) => {
         e.preventDefault();
         const deleteRow = e.currentTarget;
-        axios.delete(`http://localhost:8000/api/products/${id}`)
+        axiosInstance.delete(`products/${id}`)
             .then(response => {
-                // navigate('product/create');
                 deleteRow.closest("tr").remove();
             }).catch(function (error) {
                 if (error.response) {
+                    console.log(error.response);
                 }
-
             });
     }
   
@@ -46,14 +46,14 @@ export default function List() {
         )
     });
   return (
-    <div class="col-md-8">
+    <div className="col-md-8">
     <h1>Products List</h1>  
-    <div class="text-right" >
-        <Link to="/product/create" class="btn btn-info  btn-sm float-right add-product" role="button">Add Product</Link>
+    <div className="text-right" >
+        <Link to="/product/create" className="btn btn-info  btn-sm float-right add-product" role="button">Add Product</Link>
     </div>
-    <div class="panell">
-        <div class="panell-body table-responsive">
-            <table class="table">
+    <div className="panell">
+        <div className="panell-body table-responsive">
+            <table className="table">
                 <thead>
                     <tr>
                         <th>#</th>

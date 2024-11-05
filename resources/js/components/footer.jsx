@@ -2,12 +2,15 @@ import React from 'react'
 
 export default function Footer() {
   return (
-    <footer>
-        <p className="col-md-12">
+    <>
+    <div/>
+    <footer >
+        <p className="col-md-12 text-center ">
             
             
-			Copyright &COPY; 2015 <a href="http://www.pingpong-labs.com">Gravitano</a>
+			Copyright @ 2024 
 		</p>
      </footer>
+     </>
   )
 }

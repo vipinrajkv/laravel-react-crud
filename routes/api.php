@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\RegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::apiResource('products',ProductController::class);
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/logout', [RegisterController::class, 'logout']);
+    Route::apiResource('products', ProductController::class);
 });
+
+Route::post('/register',[App\Http\Controllers\Api\RegisterController::class, 'registerUser'])->name('register');
+Route::post('/login', [App\Http\Controllers\Api\RegisterController::class, 'login']);
