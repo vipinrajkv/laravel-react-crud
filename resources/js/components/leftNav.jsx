@@ -10,8 +10,8 @@ export default function LeftNav() {
 						<div className="side-menu-container">
 							<ul className="nav navbar-nav">
 								<li className="active">
-									<a href="#"><span className="glyphicon glyphicon-dashboard"></span>
-										Product</a>
+									<Link to="/" href="#"><span className="glyphicon glyphicon-dashboard"></span>
+										Products</Link>
 								</li>
 								<li><Link to="/product/create"><span className="glyphicon glyphicon-list-alt"></span>Add Product</Link></li>
 							</ul>

@@ -1,7 +1,14 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { useStateContext } from './contextProvider'
+import {Link, Navigate, Outlet } from 'react-router-dom'
 
-export default function Header() {
+export default function DefaultHeader() {
+	const {tokenData, setTokenData} = useStateContext();
+	if(tokenData) {
+		return <Navigate to='/'/>
+	}
   return (
+	<>
 	<nav className="navbar navbar-default navbar-static-top">
 	<div className="container-fluid">
 		<div className="navbar-header">
@@ -21,30 +28,16 @@ export default function Header() {
 		</div>
 
 		<div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			{/* <form className="navbar-form navbar-left" method="GET" role="search">
-				<div className="form-group">
-					<input type="text" name="q" className="form-control" placeholder="Search"></input><span></span>
-				</div>{' '}
-				<button type="submit" className="btn btn-default"><i className="glyphicon glyphicon-search"></i></button>
-			</form> */}
 			<ul className="nav navbar-nav navbar-right">
-				<li><a href="http://www.pingpong-labs.com" target="_blank">Visit Site</a></li>
-				<li className="dropdown ">
-					<a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-						Account
-						<span className="caret"></span></a>
-					<ul className="dropdown-menu" role="menu">
-						<li className="divider"></li>
-						<li><a href=""
-							>Logout</a></li>
-						<form id="logout-form">
+				<li><Link to="/login">Login</Link></li>
+				<li><Link to="/register">Register</Link></li>
 				
-						</form>
-					</ul>
-				</li>
 			</ul>
 		</div>
 	</div>
 	</nav>
+	<div className="container-fluid main-container"/>
+	<Outlet/>
+	</>
   )
 }

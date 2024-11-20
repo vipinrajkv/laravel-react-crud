@@ -7,7 +7,6 @@
         <title>Laravel React</title>
         @viteReactRefresh
         @vite('resources/js/app.jsx')
-        <script src="{{ asset('js/style.js') }}"></script>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
         <link rel="stylesheet" href="{{ asset('css/custom_style.css') }}">
