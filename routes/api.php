@@ -20,8 +20,8 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::post('/logout', [RegisterController::class, 'logout']);
-    Route::apiResource('products', ProductController::class);
 });
+Route::apiResource('products', ProductController::class);
 
 Route::post('/register',[App\Http\Controllers\Api\RegisterController::class, 'registerUser'])->name('register');
-Route::post('/login', [App\Http\Controllers\Api\RegisterController::class, 'login']);
+Route::post('/login', [App\Http\Controllers\Api\RegisterController::class, 'login'])->name('login');

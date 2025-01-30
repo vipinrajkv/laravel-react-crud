@@ -21,7 +21,6 @@ class RegisterController extends Controller
     public function registerUser(Request $request): JsonResponse
     {   
         try {
-            //Validated
             $validateUser = Validator::make($request->all(), 
             [
                 'name' => 'required',

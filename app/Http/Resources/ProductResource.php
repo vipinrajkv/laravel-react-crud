@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'product_image' => $this->product_image,
             'quantity' => $this->quantity,
             'updated_at' => $this->updated_at->format('Y-m-d'),
+            'quantity' => $this->quantity,
         ];
     }
 }
