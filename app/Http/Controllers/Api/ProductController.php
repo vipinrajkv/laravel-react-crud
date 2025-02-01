@@ -16,7 +16,12 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->perPage ?: 5;
-        $product = Product::query()->paginate($perPage);
+        $productData = Product::query();
+
+        if($request->searchItem != null){
+            $productData->where('product_name','LIKE','%'.$request->searchItem. '%');
+        }
+        $product = $productData->paginate($perPage);
 
         if ($product->isEmpty()) {
             return $this->sendError('No records found');

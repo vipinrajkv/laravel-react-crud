@@ -6,13 +6,15 @@ export default function List() {
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchItem, setSearchItem] = useState("");
     const perPage = 5;
     const fetchProducts = async () => {
         try {
             const response = await axiosInstance.get('products', {
                 params: {
                     perPage: perPage,
-                    page: currentPage
+                    page: currentPage,
+                    searchItem: searchItem
                 }
             })
             setProducts(response.data.data.data);
@@ -27,8 +29,10 @@ export default function List() {
     const pageNumber = Array.from({ length: totalPages }, (_, i) => i + 1)
     const navigate = useNavigate();
     useEffect(() => {
-        fetchProducts();
-    }, [currentPage]);
+        if (searchItem.length == 0 || searchItem.length > 3)
+
+            fetchProducts();
+    }, [currentPage, searchItem]);
 
     const handlePagePrevious = () => {
         if (currentPage > 1) {
@@ -82,6 +86,17 @@ export default function List() {
     return (
         <div className="col-md-8">
             <h1>Products List</h1>
+            <div className="col-sm-8 col-md-6 d-flex align-items-center">
+                <label for="search" className="control-label" style={{ marginRight: '10px', marginTop: '8px' }}>Search</label>
+                <div className="input-group">
+                    <input type="text" className="form-control" onChange={(e) => setSearchItem(e.target.value)}
+                        placeholder="Search" name="search"></input>
+                    <div className="input-group-btn">
+                        <i className="glyphicon glyphicon-search"></i>
+                    </div>
+                </div>
+            </div>
+            
             <div className="text-right" >
                 <Link to="/product/create" className="btn btn-info  btn-sm float-right add-product" role="button">Add Product</Link>
             </div>
@@ -92,7 +107,7 @@ export default function List() {
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Name</th>
+                                <th>Details</th>
                                 <th>Quantity</th>
                                 <th>Image</th>
                                 <th>Actions</th>
