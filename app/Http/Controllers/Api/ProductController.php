@@ -13,15 +13,21 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $product = Product::all();
+        $perPage = $request->perPage ?: 5;
+        $productData = Product::query();
+
+        if($request->searchItem != null){
+            $productData->where('product_name','LIKE','%'.$request->searchItem. '%');
+        }
+        $product = $productData->paginate($perPage);
 
         if ($product->isEmpty()) {
             return $this->sendError('No records found');
         }
 
-        return $this->sendResponse(ProductResource::collection($product), 'Products retrieved successfully.');
+        return $this->sendResponse(ProductResource::collection($product)->response()->getData(), 'Products retrieved successfully.');
     }
 
     /**

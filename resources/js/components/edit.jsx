@@ -1,28 +1,26 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react' ;
+import axiosInstance from '../axiosInstance';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function Edit() {
-    const {id} = useParams();
+    const { id } = useParams();
     const [product, setProduct] = useState({
         product_name: '',
         product_details: '',
         quantity: '',
         product_image: null,
     })
-
-
     const navigate = useNavigate();
-    const [validationError, setValidationError] = useState({ })
-   
-        useEffect (()=>{
-            if(id) {
-            axios.get(`http://localhost:8000/api/products/${id}`).then(response =>{
+    const [validationError, setValidationError] = useState({})
+
+    useEffect(() => {
+        if (id) {
+            axiosInstance.get(`products/${id}`).then(response => {
                 setProduct(response.data.data)
             })
         }
-        },[id]);
-    
+    }, [id]);
+
     const handleInput = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
@@ -31,7 +29,7 @@ export default function Edit() {
             setProduct({ ...product, [name]: value });
         }
     }
-    
+
     const updateFormData = (e) => {
         e.preventDefault();
         const data = {
@@ -41,21 +39,16 @@ export default function Edit() {
             product_image: product.product_image,
             _method: 'PUT'
         }
-        axios.post(`http://localhost:8000/api/products/${id}`, data, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
+        axiosInstance.post(`http://localhost:8000/api/products/${id}`, data)
             .then(response => {
                 navigate('/');
             }).catch(function (error) {
                 if (error.response) {
-                    console.log(error.response);
+
                     if (error.response.status === 400) {
                         setValidationError(error.response.data.data)
                     }
                 }
-
             });
     }
     return (
@@ -87,7 +80,7 @@ export default function Edit() {
                             </div>
                             <div className="form-group col-md-10 ">
                                 <label>Product Image:</label>
-                                <input type="file" name="product_image" accept="image/*" multiple={false}  onChange={handleInput} className="form-control" ></input>
+                                <input type="file" name="product_image" accept="image/*" multiple={false} onChange={handleInput} className="form-control" ></input>
                                 <span className='text-danger'>{validationError.product_image}</span>
                             </div>
                             <div className="form-group col-md-10 ">

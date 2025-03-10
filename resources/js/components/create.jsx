@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
+import axiosInstance from '../axiosInstance';
 
 export default function Create() {
     const [formInputs, setForm] = useState({
@@ -9,9 +10,7 @@ export default function Create() {
         product_image: null,
     })
     const navigate = useNavigate();
-    const [validationError, setValidationError] = useState({
-
-    })
+    const [validationError, setValidationError] = useState({})
     const handleInput = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
@@ -28,23 +27,16 @@ export default function Create() {
             quantity: formInputs.quantity,
             product_image: formInputs.product_image,
         }
-
-        axios.post('http://localhost:8000/api/products', data, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
+        axiosInstance.post('products', data)
             .then(response => {
                 navigate('/');
             }).catch(function (error) {
                 if (error.response) {
 
                     if (error.response.status === 400) {
-                        console.log(error.response.data.data);
                         setValidationError(error.response.data.data)
                     }
                 }
-
             });
     }
     return (
@@ -77,7 +69,7 @@ export default function Create() {
 
                             <div className="form-group col-md-10 ">
                                 <label>Product Image:</label>
-                                <input type="file" name="product_image" accept="image/*" multiple={false}  onChange={handleInput} className="form-control" ></input>
+                                <input type="file" name="product_image" accept="image/*" multiple={false} onChange={handleInput} className="form-control" ></input>
                                 <span className='text-danger'>{validationError.product_image}</span>
                             </div>
                             <div className="form-group col-md-10 ">

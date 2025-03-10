@@ -1,75 +1,138 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axiosInstance from '../axiosInstance';
 export default function List() {
-    const[products,setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchItem, setSearchItem] = useState("");
+    const perPage = 5;
+    const fetchProducts = async () => {
+        try {
+            const response = await axiosInstance.get('products', {
+                params: {
+                    perPage: perPage,
+                    page: currentPage,
+                    searchItem: searchItem
+                }
+            })
+            setProducts(response.data.data.data);
+            const paginateData = response.data.data.meta;
+            setTotalProducts(paginateData.total);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const totalPages = Math.ceil(totalProducts / perPage);
+    const pageNumber = Array.from({ length: totalPages }, (_, i) => i + 1)
     const navigate = useNavigate();
-    useEffect(()=>{
-        axios.get('http://localhost:8000/api/products').then(response =>{
-            setProducts(response.data.data)
-        })
-    },[]);
+    useEffect(() => {
+        if (searchItem.length == 0 || searchItem.length > 3)
+
+            fetchProducts();
+    }, [currentPage, searchItem]);
+
+    const handlePagePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handlePageNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
+    const handlePageNumber = (page) => {
+        setCurrentPage(page);
+    }
 
     const removeProduct = (e, id) => {
         e.preventDefault();
         const deleteRow = e.currentTarget;
-        axios.delete(`http://localhost:8000/api/products/${id}`)
+        axiosInstance.delete(`products/${id}`)
             .then(response => {
-                // navigate('product/create');
                 deleteRow.closest("tr").remove();
             }).catch(function (error) {
                 if (error.response) {
+                    console.log(error.response);
                 }
-
             });
     }
-  
-   const productList = products.map((item,index)=>{
+
+    const productList = products.map((item, index) => {
         return (
             <tr key={index}>
-            <td>{item.id}</td>
-            <td>{item.product_name}</td>
-            <td>{item.product_details}</td>
-            <td>{item.quantity}</td>
-            <td>
-                <img className="product-image" src={`images/products/${item.product_image}`} alt=""></img>
-            </td>
-            <td className="text-left">
-                <Link to={`products/${item.id}/edit`} className='btn btn-info btn-xs'><span
-                    className="glyphicon glyphicon-edit"></span> Edit
-                </Link> 
+                <td>{item.id}</td>
+                <td>{item.product_name}</td>
+                <td>{item.product_details}</td>
+                <td>{item.quantity}</td>
+                <td>
+                    <img className="product-image" src={`images/products/${item.product_image}`} alt=""></img>
+                </td>
+                <td className="text-left">
+                    <Link to={`products/${item.id}/edit`} className='btn btn-info btn-xs'><span
+                        className="glyphicon glyphicon-edit"></span> Edit
+                    </Link>
                     <a href=""
-                className="btn btn-danger btn-xs" onClick={(e)=> removeProduct(e,item.id)} ><span className="glyphicon glyphicon-remove"></span>
-            Del</a></td>
+                        className="btn btn-danger btn-xs" onClick={(e) => removeProduct(e, item.id)} ><span className="glyphicon glyphicon-remove"></span>
+                        Del</a></td>
             </tr>
-
         )
     });
-  return (
-    <div class="col-md-8">
-    <h1>Products List</h1>  
-    <div class="text-right" >
-        <Link to="/product/create" class="btn btn-info  btn-sm float-right add-product" role="button">Add Product</Link>
-    </div>
-    <div class="panell">
-        <div class="panell-body table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Name</th>
-                        <th>Image</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {productList}
-                </tbody>
-            </table>
+    return (
+        <div className="col-md-8">
+            <h1>Products List</h1>
+            <div className="col-sm-8 col-md-6 d-flex align-items-center">
+                <label for="search" className="control-label" style={{ marginRight: '10px', marginTop: '8px' }}>Search</label>
+                <div className="input-group">
+                    <input type="text" className="form-control" onChange={(e) => setSearchItem(e.target.value)}
+                        placeholder="Search" name="search"></input>
+                    <div className="input-group-btn">
+                        <i className="glyphicon glyphicon-search"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="text-right" >
+                <Link to="/product/create" className="btn btn-info  btn-sm float-right add-product" role="button">Add Product</Link>
+            </div>
+            <div className="panell">
+                <div className="panell-body table-responsive">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Details</th>
+                                <th>Quantity</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {productList}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div className="container">
+                <ul className="pagination">
+                    <li disabled={currentPage === 1} >
+                        <a onClick={() => handlePagePrevious(currentPage - 1)}>«</a>
+                    </li>
+                    {
+                        pageNumber.map((pageNum) => (
+                            <li key={pageNum} className={currentPage === pageNum ? 'active' : ''}>
+                                <a onClick={() => handlePageNumber(pageNum)}>{pageNum}</a></li>
+                        ))
+                    }
+                    <li><a onClick={() => handlePageNext()}>»</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-    </div>
-  )
+    )
 }
