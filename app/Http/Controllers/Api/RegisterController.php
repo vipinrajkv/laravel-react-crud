@@ -10,13 +10,49 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
+     /**
+     * @OA\Info(title="Laravel Api", version="0.1")
+     */
 class RegisterController extends Controller
 {
+
+
+
     /**
-     * Register User
-     *
-     * @param Request $request
-     * @return void
+     * @OA\Post(
+     * path="/api/register",
+     * operationId="Register",
+     * tags={"Register"},
+     * summary="User Register",
+     * description="User Register here",
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             required={"name", "email", "password", "password_confirmation"},
+ *             @OA\Property(property="name", type="string", example="Test Name"),
+ *             @OA\Property(property="email", type="string", example="test@example.com"),
+ *             @OA\Property(property="password", type="string", example="password123"),
+ *             @OA\Property(property="password_confirmation", type="string", example="password123")
+ *         ),
+ *     ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Register Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Register Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function registerUser(Request $request): JsonResponse
     {   
